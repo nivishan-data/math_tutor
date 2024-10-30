@@ -1,70 +1,203 @@
-# Getting Started with Create React App
+# Advanced Mathematics Tutor Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
+This application is an innovative AI-powered mathematics tutoring system that provides detailed, step-by-step explanations for complex mathematical problems. It combines modern web technologies with advanced AI capabilities to create an interactive learning experience.
 
-## Available Scripts
+## Technical Implementation Details
 
-In the project directory, you can run:
+### Backend Architecture (FastAPI)
+The backend is built using FastAPI, a modern Python web framework chosen for its:
+- High performance and async capabilities
+- Automatic API documentation
+- Built-in data validation using Pydantic
+- Easy integration with AI services
 
-### `npm start`
+Key components:
+1. **API Endpoint (`/api/answer`)**
+   - Handles POST requests containing mathematics questions
+   - Processes requests through OpenAI's fine-tuned model
+   - Returns detailed, structured responses
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2. **AI Integration**
+   - Utilizes a custom fine-tuned GPT model specifically trained for mathematical explanations
+   - Model parameters optimized for:
+     - Detailed step-by-step explanations
+     - Mathematical accuracy
+     - Student-friendly language
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. **Security & Configuration**
+   - Environment-based configuration using python-dotenv
+   - CORS middleware for secure cross-origin requests
+   - API key management for OpenAI integration
 
-### `npm test`
+### Frontend Architecture (React)
+The frontend is implemented in React, featuring:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Component Structure**
+   - `App.js`: Main application container
+   - `TutorForm.js`: Core interaction component
+   
+2. **User Interface Features**
+   - Clean, intuitive question submission interface
+   - Real-time loading states
+   - Formatted answer display
+   - Error handling with user feedback
 
-### `npm run build`
+3. **State Management**
+   - Efficient React hooks implementation
+   - Local state management for:
+     - User input
+     - API responses
+     - Loading states
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Docker Implementation
+The application is containerized using Docker for consistent deployment:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Frontend Container**
+   - Node.js based environment
+   - Production-optimized build
+   - Nginx server for static file serving
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Backend Container**
+   - Python environment with FastAPI
+   - Uvicorn server configuration
+   - Environment variable management
 
-### `npm run eject`
+3. **Docker Compose Setup**
+   - Orchestrated container deployment
+   - Network configuration
+   - Volume management
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Setup Instructions
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prerequisites
+```
+Node.js >= 14.x
+Python >= 3.8
+Docker >= 20.x
+Docker Compose >= 1.29
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Local Development Setup
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. **Backend Setup**
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+   pip install -r requirements.txt
+   ```
 
-## Learn More
+2. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. **Environment Configuration**
+   Create `.env` files:
+   
+   Backend `.env`:
+   ```
+   OPENAI_API_KEY=your_api_key_here
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Running the Application
 
-### Code Splitting
+#### Development Mode
+1. **Backend**
+   ```bash
+   cd backend
+   uvicorn app.main:app --reload --port 8000
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+2. **Frontend**
+   ```bash
+   cd frontend
+   npm start
+   ```
 
-### Analyzing the Bundle Size
+#### Production Mode (Docker)
+```bash
+docker-compose up --build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## API Documentation
 
-### Making a Progressive Web App
+### POST /api/answer
+Request body:
+```json
+{
+  "question": "string"
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Response:
+```json
+{
+  "answer": "string"
+}
+```
 
-### Advanced Configuration
+## Project Structure
+```
+math_tutor/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   └── main.py          # FastAPI application
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── TutorForm.js # Main form component
+│   │   └── App.js          # Root component
+│   ├── Dockerfile
+│   └── package.json
+└── docker-compose.yml
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Development Guidelines
 
-### Deployment
+### Code Style
+- Backend: Follow PEP 8 guidelines
+- Frontend: ESLint configuration with Airbnb style guide
+- Comprehensive documentation for all components
+- Type hints in Python code
+- PropTypes in React components
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Testing
+- Backend: PyTest for unit tests
+- Frontend: Jest and React Testing Library
+- Integration tests using Postman/Newman
 
-### `npm run build` fails to minify
+### Version Control
+- Feature branch workflow
+- Semantic versioning
+- Detailed commit messages
+- Pull request reviews
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Performance Considerations
+- Optimized Docker builds
+- Frontend bundle optimization
+- Backend response caching
+- Rate limiting on API endpoints
+- Error boundary implementation in React
+
+## Security Measures
+- Environment variable management
+- CORS configuration
+- API key rotation
+- Input validation
+- XSS prevention
+- CSRF protection
+
+## Monitoring and Logging
+- Application logs
+- Error tracking
+- Performance monitoring
+- User analytics
+- API usage metrics
+
+This mathematics tutor application demonstrates modern web development practices, combining AI capabilities with a robust technical implementation. The architecture ensures scalability, maintainability, and a smooth user experience.

@@ -1,12 +1,27 @@
 // src/components/TutorForm.js
+
+/**
+ * Component that handles user input and displays mathematical explanations.
+ * Provides an interface for users to submit mathematics questions and receive detailed answers.
+ * 
+ * @component
+ * @returns {JSX.Element} A form interface for question submission and answer display
+ */
 import React, { useState } from 'react';
 import axios from 'axios';
 
 function TutorForm() {
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [loading, setLoading] = useState(false);
+  // State management for form inputs and API response
+  const [question, setQuestion] = useState('');  // Stores the user's question
+  const [answer, setAnswer] = useState('');      // Stores the API response
+  const [loading, setLoading] = useState(false); // Tracks API request status
 
+  /**
+   * Handles form submission and API interaction.
+   * Sends the user's question to the backend and manages the response.
+   * 
+   * @param {Event} e - The form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!question.trim()) return;
@@ -15,6 +30,7 @@ function TutorForm() {
     setAnswer('');
 
     try {
+      // Send question to backend API
       const response = await axios.post('http://localhost:8000/api/answer', { question });
       setAnswer(response.data.answer);
     } catch (error) {
