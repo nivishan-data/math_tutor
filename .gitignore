@@ -1,0 +1,15 @@
+# math-tutor-app/.gitignore
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Docker
+*.env
+*.pid
