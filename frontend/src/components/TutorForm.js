@@ -1,65 +1,117 @@
-// src/components/TutorForm.js
-
-/**
- * Component that handles user input and displays mathematical explanations.
- * Provides an interface for users to submit mathematics questions and receive detailed answers.
- * 
- * @component
- * @returns {JSX.Element} A form interface for question submission and answer display
- */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function TutorForm() {
-  // State management for form inputs and API response
-  const [question, setQuestion] = useState('');  // Stores the user's question
-  const [answer, setAnswer] = useState('');      // Stores the API response
-  const [loading, setLoading] = useState(false); // Tracks API request status
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [charCount, setCharCount] = useState(0);
+  const MAX_CHARS = 500;
 
-  /**
-   * Handles form submission and API interaction.
-   * Sends the user's question to the backend and manages the response.
-   * 
-   * @param {Event} e - The form submission event
-   */
+  useEffect(() => {
+    setCharCount(question.length);
+  }, [question]);
+
+  const handleQuestionChange = (e) => {
+    const input = e.target.value;
+    if (input.length <= MAX_CHARS) {
+      setQuestion(input);
+      setError('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!question.trim()) return;
+    if (!question.trim()) {
+      setError('Please enter a question');
+      return;
+    }
 
     setLoading(true);
     setAnswer('');
+    setError('');
 
     try {
-      // Send question to backend API
       const response = await axios.post('http://localhost:8000/api/answer', { question });
       setAnswer(response.data.answer);
     } catch (error) {
       console.error('Error fetching answer:', error);
-      setAnswer('An error occurred while fetching the answer.');
+      setError(
+        error.response?.data?.detail ||
+        'An error occurred while fetching the answer. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  const handleClear = () => {
+    setQuestion('');
+    setAnswer('');
+    setError('');
+  };
+
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Enter your complex mathematics question here..."
-          rows="5"
-          cols="60"
-        />
-        <br />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Generating Answer...' : 'Get Answer'}
-        </button>
-      </form>
+      <div className="tutor-form">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <textarea
+              value={question}
+              onChange={handleQuestionChange}
+              placeholder="Enter your mathematics question here... (e.g., 'Solve the quadratic equation x² + 5x + 6 = 0')"
+              rows="5"
+              disabled={loading}
+            />
+            <div style={{ 
+              textAlign: 'right', 
+              fontSize: '0.8rem', 
+              color: charCount >= MAX_CHARS ? 'var(--error-color)' : 'gray' 
+            }}>
+              {charCount}/{MAX_CHARS} characters
+            </div>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button type="submit" disabled={loading || !question.trim()}>
+              {loading ? (
+                <>
+                  <span className="loading-spinner"></span>
+                  Generating Answer...
+                </>
+              ) : (
+                'Get Answer'
+              )}
+            </button>
+            {question && !loading && (
+              <button 
+                type="button" 
+                onClick={handleClear}
+                style={{ 
+                  backgroundColor: 'var(--secondary-color)',
+                  maxWidth: '150px'
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </form>
+
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+      </div>
+
       {answer && (
-        <div>
-          <h2>Answer:</h2>
-          <pre style={{ whiteSpace: 'pre-wrap' }}>{answer}</pre>
+        <div className="answer-section">
+          <h2>Solution:</h2>
+          <div className="answer-content">
+            {answer}
+          </div>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 # frontend/Dockerfile
 # Use official Node.js image as the base
-FROM node:14-alpine
+FROM node:18-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -8,13 +8,14 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Clean install dependencies with no package-lock
+RUN npm clean-install --no-package-lock
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the React app
+# Build the React app (CI=false prevents treating warnings as errors)
+ENV CI=false
 RUN npm run build
 
 # Use a lightweight web server to serve the static files
